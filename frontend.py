@@ -1,4 +1,5 @@
 import tkinter as tk
+import backend
 
 class ChatbotInterface(tk.Tk):
     def __init__(self):
@@ -76,9 +77,25 @@ class ChatbotInterface(tk.Tk):
         if user_message.strip():
             self.display_message("You", user_message, user=True)
             self.user_entry.delete(0, tk.END)
-            # Here you would call your backend function to get the bot's response
-            bot_response = "Hello! How can I help you today?"
-            self.display_message("Bot", bot_response, user=False)
+            
+            # Gather all messages from the chat_display
+            self.chat_display.configure(state="normal")
+            all_messages = self.chat_display.get("1.0", "end-1c")
+            self.chat_display.configure(state="disabled")
+            
+            # Prepare the context for the backend
+            context = "system: You are a Chatbot designed to legally assist users. Right now you are running inside of a tkinter window, so no Markdown Syntax please.\n"
+            lines = all_messages.split("\n")
+            for line in lines:
+                if line.startswith("You: "):
+                    context += "user: " + line[5:] + "\n"
+                elif line.startswith("Bot: "):
+                    context += "bot: " + line[5:] + "\n"
+        
+        # Call the backend function to get the bot's response
+        bot_response = backend.get_response(context)
+        self.display_message("Bot", bot_response, user=False)
+
 
     def display_message(self, sender, message, user):
         # Insert messages with distinct text colors for user and bot
