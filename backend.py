@@ -8,7 +8,7 @@ with open("API_KEY.txt", "r") as f:
 genai.configure(api_key=api_key)
 
 
-def get_response(context, model_name="gemini-1.5-flash", max_tokens=100):
+def get_response(context, model_name="gemini-1.5-flash"):
     """
     Generates a response from the generative model using the provided context.
 
@@ -21,7 +21,7 @@ def get_response(context, model_name="gemini-1.5-flash", max_tokens=100):
     - str: The generated response text.
     """
     model = genai.GenerativeModel(model_name)
-    response = model.generate_content(context, max_tokens=max_tokens)
+    response = model.generate_content(context)
     return response.text
 
 
